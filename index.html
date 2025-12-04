@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中间件安全笔记</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 保持原有样式不变 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary-blue: #4da6ff;
+            --light-blue: #e6f2ff;
+            --medium-blue: #80bfff;
+            --dark-blue: #1a75ff;
+            --sidebar-width: 280px;
+            --header-height: 60px;
+        }
+        
+        body {
+            background-color: var(--light-blue);
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* 侧边栏样式 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(to bottom, var(--primary-blue), #3399ff);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sidebar-header h2 i {
+            margin-right: 10px;
+        }
+        
+        .sidebar-nav {
+            padding: 15px 0;
+        }
+        
+        .nav-category {
+            margin-bottom: 5px;
+        }
+        
+        .category-title {
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .category-title:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .category-title i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .nav-links {
+            list-style: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .nav-category.active .nav-links {
+            max-height: 1000px;
+        }
+        
+        .nav-links a {
+            display: block;
+            padding: 10px 20px 10px 50px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-links a:hover, .nav-links a.active, .category-title.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-left-color: white;
+            color: white;
+        }
+        
+        /* 主内容区样式 */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            background-color: var(--light-blue);
+        }
+        
+        .note-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .note-section.active {
+            display: block;
+        }
+        
+        .note-header {
+            border-bottom: 2px solid var(--primary-blue);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .note-title {
+            color: var(--dark-blue);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .note-meta {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .note-content h3 {
+            color: var(--dark-blue);
+            margin: 20px 0 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #ccc;
+        }
+        
+        .note-content p {
+            margin-bottom: 15px;
+        }
+        
+        .vulnerability-list {
+            background-color: var(--light-blue);
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .vulnerability-list li {
+            margin-bottom: 8px;
+            padding-left: 10px;
+        }
+        
+        .code-block {
+            background-color: #f5f5f5;
+            border-left: 4px solid var(--primary-blue);
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Consolas', monospace;
+            overflow-x: auto;
+        }
+        
+        .tag {
+            display: inline-block;
+            background-color: var(--medium-blue);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .nav-links {
+                max-height: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-shield-alt"></i> xxpuppy</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-category">
+                <a href="#" class="category-title" data-target="homepage">
+                    <i class="fas fa-home"></i> 主页
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#" data-target="homepage">主页</a></li>
+                </ul>
+            </div>
+            
+            <div class="nav-category active">
+                <a href="#" class="category-title" data-target="extranet-security">
+                    <i class="fas fa-globe"></i> 外网安全
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#" data-target="info-collection">信息搜集</a></li>
+                    <li><a href="#" data-target="specific-scenarios">特定场景渗透</a></li>
+                    <li style="padding-left: 30px;"><a href="#" data-target="frontend-backend">前后端分离</a></li>
+                    <li style="padding-left: 30px;"><a href="#" data-target="unauthorized">未授权</a></li>
+                    <li style="padding-left: 30px;"><a href="#" data-target="logic-vulnerability">逻辑漏洞</a></li>
+                    <li style="padding-left: 30px;"><a href="#" data-target="concurrent-bug">并发漏洞</a></li>
+                    <li style="padding-left: 30px;"><a href="#" data-target="info-leak">信息泄露</a></li>
+                </ul>
+            </div>
+            
+            <!-- 新增的漏洞基础分类 -->
+            <div class="nav-category active">
+                <a href="#" class="category-title" data-target="vulnerability-basics">
+                    <i class="fas fa-exclamation-triangle"></i> 漏洞基础
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#" class="active" data-target="vulnerability-basics">漏洞基础</a></li>
+                    <li style="padding-left: 30px;"><a href="#" data-target="sql-injection">SQL注入</a></li>
+                    <li style="padding-left: 30px;"><a href="#" data-target="xss">XSS</a></li>
+                    <li style="padding-left: 30px;"><a href="#" data-target="ssrf">SSRF</a></li>
+                    <li style="padding-left: 30px;"><a href="#" data-target="csrf">CSRF</a></li>
+                    <li style="padding-left: 30px;"><a href="#" data-target="upload">Upload</a></li>
+                    <li style="padding-left: 30px;"><a href="#" data-target="xxe">XXE</a></li>
+                    <li style="padding-left: 30px;"><a href="#" data-target="rce">RCE</a></li>
+                    <li style="padding-left: 30px;"><a href="#" data-target="file-inclusion">文件包含</a></li>
+                    <li style="padding-left: 30px;"><a href="#" data-target="deserialization">反序列化</a></li>
+                    <li style="padding-left: 30px;"><a href="#" data-target="oauth-hijack">OAuth劫持</a></li>
+                </ul>
+            </div>
+            
+            <div class="nav-category">
+                <a href="#" class="category-title" data-target="intranet-security">
+                    <i class="fas fa-network-wired"></i> 内网安全
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#" data-target="intranet-info-collection">信息搜集</a></li>
+                    <li><a href="#" data-target="privilege-escalation">权限提升</a></li>
+                    <li><a href="#" data-target="tunnel-proxy">隧道代理</a></li>
+                    <li><a href="#" data-target="lateral-movement">横向渗透</a></li>
+                </ul>
+            </div>
+            
+            <div class="nav-category">
+                <a href="#" class="category-title" data-target="cloud-security-overview">
+                    <i class="fas fa-cloud"></i> 云安全
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#" data-target="cloud-security">云安全详情</a></li>
+                </ul>
+            </div>
+
+            <div class="nav-category">
+                <a href="#" class="category-title" data-target="getshell-summary">
+                    <i class="fas fa-terminal"></i> Getshell总结
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#" data-target="getshell-summary">Getshell总结</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- 主内容区保持不变 -->
+    <main class="main-content">
+        <!-- Getshell 总结（已精简） -->
+        <section id="getshell-summary" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">Getshell 总结</h1>
+                <div class="note-meta">分类: Getshell总结</div>
+            </div>
+            <div class="note-content">
+                <p>内容已移除，正在整理中。</p>
+            </div>
+        </section>
+
+        <section id="apache-security" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">Apache安全详解</h1>
+                <div class="note-meta">最后更新: 2023年11月20日 | 分类: 中间件安全</div>
+            </div>
+            <div class="note-content">
+                <p>Apache是最流行的Web服务器之一，本章节介绍Apache的安全配置、常见漏洞（如目录遍历、解析漏洞）及加固方法。</p>
+            </div>
+        </section>
+
+        <section id="nginx-security" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">Nginx安全详解</h1>
+                <div class="note-meta">最后更新: 2023年11月18日 | 分类: 中间件安全</div>
+            </div>
+            <div class="note-content">
+                <p>Nginx以其高性能和稳定性著称，本章节讲解Nginx的安全配置、常见安全问题及最佳实践。</p>
+            </div>
+        </section>
+
+        <section id="iis-security" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">IIS安全详解</h1>
+                <div class="note-meta">最后更新: 2023年11月15日 | 分类: 中间件安全</div>
+            </div>
+            <div class="note-content">
+                <p>IIS是Windows服务器上常用的Web服务器，本章节介绍IIS的安全配置、常见漏洞及防护措施。</p>
+            </div>
+        </section>
+        
+        <section id="tomcat-security" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">Tomcat安全详解</h1>
+                <div class="note-meta">最后更新: 2023年11月10日 | 分类: 中间件安全</div>
+            </div>
+            <div class="note-content">
+                <p>Tomcat是常用的Java Web应用服务器，本章节讲解Tomcat的安全配置、管理界面安全及常见漏洞。</p>
+            </div>
+        </section>
+        
+        <section id="weblogic-security" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">Weblogic安全详解</h1>
+                <div class="note-meta">最后更新: 2023年11月5日 | 分类: 中间件安全</div>
+            </div>
+            <div class="note-content">
+                <p>Weblogic是Oracle的Java应用服务器，本章节介绍Weblogic的安全配置、常见漏洞及加固方法。</p>
+            </div>
+        </section>
+        
+        <!-- 外网安全概述 -->
+        <section id="extranet-security" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">外网安全</h1>
+                <div class="note-meta">分类: 外网安全</div>
+            </div>
+            <div class="note-content">
+                <p>外网安全指的是针对互联网暴露服务的安全防护和渗透测试。包括各种Web应用漏洞、服务器配置安全、网络边界防护等内容。</p>
+                <p>本章节涵盖了常见的Web漏洞原理、利用方法和防御措施，以及外网信息搜集、特定场景渗透等实用技巧。</p>
+            </div>
+        </section>
+
+        <!-- 内网安全概述 -->
+        <section id="intranet-security" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">内网安全</h1>
+                <div class="note-meta">分类: 内网安全</div>
+            </div>
+            <div class="note-content">
+                <p>内网安全指的是企业内部网络的安全防护，包括内部信息系统、服务器、终端设备等的安全。</p>
+                <p>本章节涵盖内网信息搜集、权限提升、隧道代理和横向渗透等内网安全相关技术和方法。</p>
+            </div>
+        </section>
+
+        <!-- 云安全概述 -->
+        <section id="cloud-security-overview" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">云安全概述</h1>
+                <div class="note-meta">分类: 云安全</div>
+            </div>
+            <div class="note-content">
+                <p>云安全是指保护云计算环境、数据、应用程序和基础设施免受各种安全威胁的措施和实践。</p>
+                <p>随着云计算的普及，云安全已经成为企业安全战略的重要组成部分，涉及云平台配置安全、数据保护、身份认证等多个方面。</p>
+            </div>
+        </section>
+        
+        <!-- 其他分类的内容 -->
+        <section id="data-structure" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">数据结构</h1>
+                <div class="note-meta">分类: 空间</div>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="interview" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">面试细则</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="homepage" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">主页</h1>
+            </div>
+            <div class="note-content">
+                <p>欢迎来到安全研究笔记，这里收集了各种网络安全相关的知识和实践经验，包括外网安全、内网安全、中间件安全和云安全等多个领域。</p>
+                <p>使用左侧导航可以浏览不同分类的内容，点击分类标题或子项即可查看相应笔记。</p>
+            </div>
+        </section>
+        
+        <section id="vulnerability-basics" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">漏洞基础</h1>
+            </div>
+            <div class="note-content">
+                <p>漏洞是指计算机系统或软件中存在的缺陷或弱点，可能被攻击者利用来获取未授权的访问或造成其他安全问题。</p>
+                <p>本章节介绍常见漏洞的基本概念、分类和通用利用方法。</p>
+            </div>
+        </section>
+        
+        <section id="sql-injection" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">SQL注入</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="xss" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">XSS</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="ssrf" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">SSRF</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="csrf" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">CSRF</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="upload" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">Upload</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="xxe" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">XXE</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="rce" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">RCE</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="file-inclusion" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">文件包含</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="deserialization" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">反序列化</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="oauth-hijack" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">OAuth劫持</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="info-collection" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">信息搜集</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="specific-scenarios" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">特定场景渗透</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="frontend-backend" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">前后端分离</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="unauthorized" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">未授权</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="logic-vulnerability" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">逻辑漏洞</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="concurrent-bug" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">并发漏洞</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="info-leak" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">信息泄露</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="intranet-info-collection" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">内网信息搜集</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="privilege-escalation" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">权限提升</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="tunnel-proxy" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">隧道代理</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="lateral-movement" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">横向渗透</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+        
+        <section id="cloud-security" class="note-section">
+            <div class="note-header">
+                <h1 class="note-title">云安全详情</h1>
+            </div>
+            <div class="note-content">
+                <p>正在完善中</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // 侧边栏导航功能保持不变
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取所有导航链接和分类标题链接
+            const navLinks = document.querySelectorAll('.nav-links a, .category-title');
+            
+            // 获取所有内容区域
+            const noteSections = document.querySelectorAll('.note-section');
+            
+            // 获取所有分类容器
+            const navCategories = document.querySelectorAll('.nav-category');
+            
+            // 为每个链接添加点击事件
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 获取目标section的ID
+                    const targetId = this.getAttribute('data-target');
+                    if (!targetId) return;
+                    
+                    // 移除所有活动类
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    noteSections.forEach(section => section.classList.remove('active'));
+                    navCategories.forEach(cat => cat.classList.remove('active'));
+                    
+                    // 添加活动类到当前链接
+                    this.classList.add('active');
+                    
+                    // 如果是分类标题，激活其父分类容器
+                    if (this.classList.contains('category-title')) {
+                        this.closest('.nav-category').classList.add('active');
+                    } else {
+                        // 如果是子链接，激活其父分类容器
+                        this.closest('.nav-category').classList.add('active');
+                    }
+                    
+                    // 显示目标section
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                    }
+                });
+            });
+            
+            // 初始化 - 显示默认的活跃部分
+            const defaultActive = document.querySelector('.nav-links a.active') || 
+                                 document.querySelector('.category-title.active');
+            if (defaultActive) {
+                const targetId = defaultActive.getAttribute('data-target');
+                if (targetId) {
+                    document.getElementById(targetId).classList.add('active');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
