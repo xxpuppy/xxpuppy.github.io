@@ -1,0 +1,583 @@
+---
+// 首页 - Asorn 风格
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+const categories = [...new Set(posts.flatMap(p => p.data.categories))];
+
+const categoryMeta = [
+  { name: '核心漏洞', icon: '🛡️', desc: 'XSS、SQLi、SSRF 等常见 Web 漏洞' },
+  { name: '特定场景渗透', icon: '🔍', desc: '未授权、登录页面、找回密码等' },
+  { name: '特殊漏洞', icon: '⚠️', desc: 'OAuth 劫持、URL 重定向等' },
+];
+---
+
+<BaseLayout title="Home">
+  <!-- 星空背景 -->
+  <div class="rising-stars">
+    <div class="stars"></div>
+    <div class="stars2"></div>
+    <div class="stars3"></div>
+  </div>
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-text">
+          <p class="greeting">Hi, I'm</p>
+          <h1 class="name gradient-text">xxpuppy</h1>
+          <div class="typed-wrapper">
+            <span class="typed-text" id="typed-output"></span>
+            <span class="cursor">|</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider-gradient">
+    <div class="container">
+      <div class="divider-line"></div>
+    </div>
+  </div>
+
+  <section class="categories-section">
+    <div class="container">
+      <h2 class="section-title">Quick Links</h2>
+      <div class="categories-grid">
+        {categoryMeta.filter(c => categories.includes(c.name)).map((cat) => (
+          <a href={`/blog?category=${cat.name}`} class="category-card magical">
+            <div class="card-icon">{cat.icon}</div>
+            <h3 class="card-title">{cat.name}</h3>
+            <p class="card-desc">{cat.desc}</p>
+            <span class="card-link">
+              Explore
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <div class="divider-gradient">
+    <div class="container">
+      <div class="divider-line"></div>
+    </div>
+  </div>
+
+  <section class="latest-posts">
+    <div class="container">
+      <h2 class="section-title">Latest Posts</h2>
+      <div class="posts-list">
+        {posts.slice(0, 5).map((post) => (
+          <a href={`/blog/${post.id}`} class="post-item magical">
+            <div class="post-info">
+              <h3 class="post-title">{post.data.title}</h3>
+              <p class="post-meta">
+                <span class="post-categories">
+                  {post.data.categories.join(' / ')}
+                </span>
+                <span class="post-date">
+                  {new Date(post.data.date).toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+                </span>
+              </p>
+            </div>
+            <svg class="post-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        ))}
+      </div>
+      <div class="view-all">
+        <a href="/blog" class="btn btn-outline">
+          View All Posts
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="shape-light"></div>
+</BaseLayout>
+
+<style>
+  /* ===== Rising Stars Background ===== */
+  .rising-stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -998;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .stars, .stars2, .stars3 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+  }
+
+  .stars {
+    background-image:
+      radial-gradient(1px 1px at 10% 20%, rgba(162, 156, 211, 0.6) 50%, transparent 50%),
+      radial-gradient(1px 1px at 30% 60%, rgba(162, 156, 211, 0.4) 50%, transparent 50%),
+      radial-gradient(1px 1px at 50% 10%, rgba(232, 191, 172, 0.5) 50%, transparent 50%),
+      radial-gradient(1px 1px at 70% 80%, rgba(162, 156, 211, 0.3) 50%, transparent 50%),
+      radial-gradient(1px 1px at 90% 40%, rgba(232, 191, 172, 0.4) 50%, transparent 50%);
+    background-size: 350px 350px;
+    animation: rising 12s linear infinite;
+  }
+
+  .stars2 {
+    background-image:
+      radial-gradient(1.5px 1.5px at 15% 35%, rgba(162, 156, 211, 0.5) 50%, transparent 50%),
+      radial-gradient(1.5px 1.5px at 45% 75%, rgba(232, 191, 172, 0.3) 50%, transparent 50%),
+      radial-gradient(1.5px 1.5px at 65% 25%, rgba(162, 156, 211, 0.4) 50%, transparent 50%),
+      radial-gradient(1.5px 1.5px at 85% 55%, rgba(232, 191, 172, 0.5) 50%, transparent 50%);
+    background-size: 400px 400px;
+    animation: rising 16s linear infinite;
+  }
+
+  .stars3 {
+    background-image:
+      radial-gradient(2px 2px at 20% 50%, rgba(99, 97, 220, 0.3) 50%, transparent 50%),
+      radial-gradient(2px 2px at 60% 15%, rgba(99, 97, 220, 0.2) 50%, transparent 50%),
+      radial-gradient(2px 2px at 80% 65%, rgba(162, 156, 211, 0.3) 50%, transparent 50%);
+    background-size: 500px 500px;
+    animation: rising 20s linear infinite;
+  }
+
+  @keyframes rising {
+    from { transform: translateY(0); }
+    to { transform: translateY(-500px); }
+  }
+
+  /* ===== Hero Section ===== */
+  /* ===== Fireworks Canvas ===== */
+  .fireworks {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  /* ===== Hero Section ===== */
+  .hero {
+    min-height: 75vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 60px 0 40px;
+  }
+
+  .hero-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    width: 100%;
+    position: relative;
+  }
+
+  .hero-text {
+    flex: 1;
+    z-index: 2;
+    text-align: center;
+  }
+
+  .greeting {
+    font-size: 1.25rem;
+    color: #B3B3C1;
+    margin-bottom: 8px;
+    font-weight: 300;
+  }
+
+  .name {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 700;
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #A29CD3, #E8BFAC);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .typed-wrapper {
+    font-size: 1.15rem;
+    color: #B3B3C1;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .typed-text {
+    color: #A29CD3;
+    font-weight: 500;
+  }
+
+  .cursor {
+    animation: blink 1s step-end infinite;
+    color: #6361DC;
+    margin-left: 2px;
+    font-weight: 300;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  /* Dot grid decoration */
+  .dot-grid-decoration {
+    position: absolute;
+    right: -40px;
+    top: -20px;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 12px;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .dot {
+    width: 4px;
+    height: 4px;
+    background: rgba(162, 156, 211, 0.25);
+    border-radius: 50%;
+  }
+
+  /* ===== Divider ===== */
+  .divider-gradient {
+    padding: 20px 0;
+  }
+
+  .divider-line {
+    height: 2px;
+    background: radial-gradient(circle, #6361DC 0%, #4E4E64 30%, transparent 70%);
+    opacity: 0.5;
+  }
+
+  /* ===== Categories Section ===== */
+  .categories-section {
+    padding: 40px 0 20px;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #E8E8F6;
+    margin-bottom: 32px;
+    text-align: center;
+  }
+
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .category-card {
+    position: relative;
+    background: rgba(20, 20, 25, 0.6);
+    border: 1px solid rgba(78, 78, 100, 0.3);
+    border-radius: 12px;
+    padding: 28px 24px;
+    color: #E8E8F6;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+
+  .category-card::before {
+    content: '';
+    position: absolute;
+    top: var(--mouse-y, 50%);
+    left: var(--mouse-x, 50%);
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(99, 97, 220, 0.15), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .category-card:hover::before {
+    opacity: 1;
+  }
+
+  .category-card:hover {
+    border-color: rgba(99, 97, 220, 0.5);
+    transform: translateY(-2px);
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #E8E8F6;
+    margin-bottom: 8px;
+  }
+
+  .card-desc {
+    font-size: 0.875rem;
+    color: #62616F;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #A29CD3;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .card-link svg {
+    transition: transform 0.3s ease;
+  }
+
+  .category-card:hover .card-link svg {
+    transform: translateX(4px);
+  }
+
+  /* ===== Latest Posts ===== */
+  .latest-posts {
+    padding: 40px 0 80px;
+  }
+
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 32px;
+  }
+
+  .post-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    color: #E8E8F6;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.25s ease;
+    position: relative;
+    background: transparent;
+  }
+
+  .post-item::before {
+    content: '';
+    position: absolute;
+    top: var(--mouse-y, 50%);
+    left: var(--mouse-x, 50%);
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(99, 97, 220, 0.08), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .post-item:hover::before {
+    opacity: 1;
+  }
+
+  .post-item:hover {
+    background: rgba(31, 31, 38, 0.5);
+  }
+
+  .post-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .post-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #E8E8F6;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 0.8rem;
+  }
+
+  .post-categories {
+    color: #62616F;
+  }
+
+  .post-date {
+    color: #4E4E64;
+  }
+
+  .post-arrow {
+    color: #4E4E64;
+    flex-shrink: 0;
+    margin-left: 16px;
+    transition: all 0.3s ease;
+  }
+
+  .post-item:hover .post-arrow {
+    color: #A29CD3;
+    transform: translateX(4px);
+  }
+
+  .view-all {
+    text-align: center;
+  }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    border: 1px solid rgba(78, 78, 100, 0.5);
+    border-radius: 9999px;
+    color: #B3B3C1;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+
+  .btn-outline:hover {
+    border-color: #6361DC;
+    color: #E8E8F6;
+    background: rgba(99, 97, 220, 0.1);
+  }
+
+  .btn-outline svg {
+    transition: transform 0.3s ease;
+  }
+
+  .btn-outline:hover svg {
+    transform: translateX(4px);
+  }
+
+  /* ===== Shape Light (底部紫色灯光) ===== */
+  .shape-light {
+    position: fixed;
+    bottom: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse at center, rgba(99, 97, 220, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* ===== Responsive ===== */
+  @media screen and (max-width: 768px) {
+    .hero {
+      min-height: 60vh;
+      padding: 40px 0 20px;
+    }
+
+    .hero-content {
+      flex-direction: column;
+    }
+
+    .dot-grid-decoration {
+      position: relative;
+      right: 0;
+      top: 0;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 10px;
+      margin-top: 24px;
+      opacity: 0.5;
+    }
+
+    .categories-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .post-item {
+      padding: 14px 16px;
+    }
+
+    .post-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+  }
+</style>
+
+<script>
+  // Typed.js 打字效果 - 手动实现，不依赖外部库
+  document.addEventListener('DOMContentLoaded', () => {
+    const target = document.getElementById('typed-output');
+    if (!target) return;
+
+    const strings = [
+      '一名网络安全爱好者',
+    ];
+
+    let stringIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let typingSpeed = 100;
+
+    function type() {
+      const currentString = strings[stringIndex];
+
+      if (isDeleting) {
+        target!.textContent = currentString.substring(0, charIndex - 1);
+        charIndex--;
+        typingSpeed = 50;
+      } else {
+        target!.textContent = currentString.substring(0, charIndex + 1);
+        charIndex++;
+        typingSpeed = 100;
+      }
+
+      if (!isDeleting && charIndex === currentString.length) {
+        typingSpeed = 2000;
+        isDeleting = true;
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        stringIndex = (stringIndex + 1) % strings.length;
+        typingSpeed = 500;
+      }
+
+      setTimeout(type, typingSpeed);
+    }
+
+    setTimeout(type, 1000);
+  });
+</script>
+
+

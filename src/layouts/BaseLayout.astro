@@ -1,0 +1,236 @@
+---
+// 基础布局组件
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.scss';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+}
+
+const { title, description = 'xxpuppy 的个人博客 - 网络安全技术分享', image } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <meta name="generator" content={Astro.generator} />
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonicalURL} />
+  <meta property="og:type" content="website" />
+  {image && <meta property="og:image" content={new URL(image, Astro.url)} />}
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  {image && <meta name="twitter:image" content={new URL(image, Astro.url)} />}
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href={canonicalURL} />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  
+  <!-- 字体 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  
+  <title>{title} | xxpuppy 的博客</title>
+</head>
+<body>
+  <!-- 背景特效画布 -->
+  <canvas class="fireworks" id="fireworks-canvas"></canvas>
+  
+  <!-- 主要内容 -->
+  <div class="site-wrapper">
+    <Header />
+    
+    <main class="main-content">
+      <slot />
+    </main>
+    
+    <Footer />
+  </div>
+  
+  <!-- GSAP 和动画脚本 -->
+  <script>
+    // 鼠标跟随光效
+    document.addEventListener('DOMContentLoaded', () => {
+      const magicalElements = document.querySelectorAll('.magical');
+      
+      magicalElements.forEach((el) => {
+        el.addEventListener('mousemove', (e) => {
+          const rect = el.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          
+          el.style.setProperty('--mouse-x', `${x}px`);
+          el.style.setProperty('--mouse-y', `${y}px`);
+        });
+      });
+    });
+  </script>
+
+  <!-- anime.js + 烟花点击效果 -->
+  <script is:inline src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+  <script is:inline>
+    window.human = false;
+    var canvasEl = document.querySelector('.fireworks');
+    if (canvasEl) {
+      var ctx = canvasEl.getContext('2d');
+      var numberOfParticules = 20;
+      var pointerX = 0;
+      var pointerY = 0;
+      var tap = ('ontouchstart' in window || navigator.msMaxTouchPoints) ? 'touchstart' : 'mousedown';
+      var colors = ['rgba(99, 97, 220, 0.2)', 'rgba(99, 97, 220, 0.4)', 'rgba(139, 240, 254, 0.2)'];
+
+      function setCanvasSize() {
+        canvasEl.width = window.innerWidth * 2;
+        canvasEl.height = window.innerHeight * 2;
+        canvasEl.style.width = window.innerWidth + 'px';
+        canvasEl.style.height = window.innerHeight + 'px';
+        canvasEl.getContext('2d').scale(2, 2);
+      }
+
+      function updateCoords(e) {
+        pointerX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+        pointerY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+      }
+
+      function setParticuleDirection(p) {
+        var angle = anime.random(0, 360) * Math.PI / 180;
+        var value = anime.random(50, 180);
+        var radius = [-1, 1][anime.random(0, 1)] * value;
+        return {
+          x: p.x + radius * Math.cos(angle),
+          y: p.y + radius * Math.sin(angle)
+        }
+      }
+
+      function createParticule(x, y) {
+        var p = {};
+        p.x = x;
+        p.y = y;
+        p.color = colors[anime.random(0, colors.length - 1)];
+        p.radius = anime.random(8, 16);
+        p.endPos = setParticuleDirection(p);
+        p.draw = function() {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI, true);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+        }
+        return p;
+      }
+
+      function createCircle(x, y) {
+        var p = {};
+        p.x = x;
+        p.y = y;
+        p.color = '#6361DC';
+        p.radius = 0.1;
+        p.alpha = 0.01;
+        p.lineWidth = 2;
+        p.draw = function() {
+          ctx.globalAlpha = p.alpha;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI, true);
+          ctx.lineWidth = p.lineWidth;
+          ctx.strokeStyle = p.color;
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+        return p;
+      }
+
+      function renderParticule(anim) {
+        for (var i = 0; i < anim.animatables.length; i++) {
+          anim.animatables[i].target.draw();
+        }
+      }
+
+      function animateParticules(x, y) {
+        var circle = createCircle(x, y);
+        var particules = [];
+        for (var i = 0; i < numberOfParticules; i++) {
+          particules.push(createParticule(x, y));
+        }
+        anime.timeline().add({
+          targets: particules,
+          x: function(p) { return p.endPos.x; },
+          y: function(p) { return p.endPos.y; },
+          radius: 0.1,
+          duration: anime.random(1200, 1800),
+          easing: 'easeOutExpo',
+          update: renderParticule
+        }).add({
+          targets: circle,
+          radius: anime.random(80, 160),
+          lineWidth: 0,
+          alpha: {
+            value: 0,
+            easing: 'linear',
+            duration: anime.random(600, 800),
+          },
+          duration: anime.random(1200, 1800),
+          easing: 'easeOutExpo',
+          update: renderParticule,
+          offset: 0
+        });
+      }
+
+      var render = anime({
+        duration: Infinity,
+        update: function() {
+          ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+        }
+      });
+
+      document.addEventListener(tap, function(e) {
+        window.human = true;
+        render.play();
+        updateCoords(e);
+        animateParticules(pointerX, pointerY);
+      }, false);
+
+      setCanvasSize();
+      window.addEventListener('resize', setCanvasSize, false);
+    }
+  </script>
+</body>
+</html>
+
+<style>
+  .site-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .main-content {
+    flex: 1;
+    padding-top: 80px; /* 为固定导航栏留出空间 */
+  }
+  
+  .fireworks {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: -999;
+    pointer-events: none;
+  }
+</style>

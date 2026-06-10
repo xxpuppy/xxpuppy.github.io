@@ -1,0 +1,49 @@
+// Asorn 设计系统变量
+// 基于 asorn-open-main 模板的设计规范
+
+// 颜色系统
+$color-brand-default: #6361DC;
+$color-text-body-primary: #E8E8F6;
+$color-text-body-secondary: #B3B3C1;
+$color-text-body-tertiary: #62616F;
+$color-fill-button: #1F1F26;
+$color-fill-card: #141419;
+$color-fill-bg: #0E0E13;
+$color-white: #ffffff;
+$color-start: #A29CD3;
+$color-end: #E8BFAC;
+$line-color: #4E4E64;
+$head-bg: #191920;
+$shadow: #0a0a0e;
+
+// 圆角
+$border-radius-default: 6px;
+$border-radius-full: 9999px;
+
+// 阴影
+$card-shadow: 0px 0px 8px 0px rgba($shadow, 0.4);
+
+// 字体
+$font-family-primary: 'Roboto', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+// 间距
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-2xl: 48px;
+$spacing-3xl: 64px;
+
+// 过渡
+$transition-default: 0.3s ease-in-out;
+$transition-slow: 0.5s ease-in-out;
+
+// 响应式断点
+$breakpoint-mobile: 768px;
+$breakpoint-tablet: 1024px;
+$breakpoint-desktop: 1200px;
+
+// 最大宽度
+$max-width-content: 968px;
+$max-width-wide: 1200px;

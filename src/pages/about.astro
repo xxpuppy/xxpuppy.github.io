@@ -1,0 +1,208 @@
+---
+// 关于页面
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="关于我">
+  <section class="about-page">
+    <div class="container">
+      <!-- 个人介绍 -->
+      <div class="about-header">
+        <div class="avatar-wrapper">
+          <div class="avatar">
+            <span class="avatar-text">P</span>
+          </div>
+        </div>
+        <div class="about-intro">
+          <h1 class="about-name">xxpuppy</h1>
+          <p class="about-title">网络安全研究者 | 渗透测试爱好者</p>
+          <p class="about-desc">
+            热爱网络安全技术，专注于 Web 安全漏洞研究与挖掘。
+            通过实践积累经验，分享学习笔记，与同行交流成长。
+          </p>
+          <div class="about-links">
+            <a href="https://github.com/xxpuppy" target="_blank" rel="noopener noreferrer" class="btn primary">
+              GitHub
+            </a>
+            <a href="/blog" class="btn">
+              查看博客
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 联系方式 -->
+      <div class="contact-section">
+        <h2 class="section-title">联系方式</h2>
+        <div class="contact-cards">
+          <div class="contact-card magical">
+            <div class="contact-icon">📧</div>
+            <h3 class="contact-title">邮箱</h3>
+            <p class="contact-info">1703653177@qq.com</p>
+          </div>
+          <div class="contact-card magical">
+            <div class="contact-icon">💬</div>
+            <h3 class="contact-title">QQ</h3>
+            <p class="contact-info">1703653177</p>
+          </div>
+          <div class="contact-card magical">
+            <div class="contact-icon">🐙</div>
+            <h3 class="contact-title">GitHub</h3>
+            <a href="https://github.com/xxpuppy" target="_blank" rel="noopener noreferrer" class="contact-link">
+              github.com/xxpuppy
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about-page {
+    padding: 40px 0 80px;
+  }
+  
+  /* 个人介绍 */
+  .about-header {
+    display: flex;
+    gap: 48px;
+    align-items: center;
+    margin-bottom: 80px;
+  }
+  
+  .avatar-wrapper {
+    flex-shrink: 0;
+  }
+  
+  .avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #A29CD3, #E8BFAC);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 4px 20px rgba(99, 97, 220, 0.3);
+  }
+  
+  .avatar-text {
+    font-size: 64px;
+    font-weight: 700;
+    color: #0E0E13;
+  }
+  
+  .about-intro {
+    flex: 1;
+  }
+  
+  .about-name {
+    font-size: 36px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #A29CD3, #E8BFAC);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  
+  .about-title {
+    font-size: 18px;
+    color: #6361DC;
+    margin-bottom: 16px;
+  }
+  
+  .about-desc {
+    color: #B3B3C1;
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+  
+  .about-links {
+    display: flex;
+    gap: 16px;
+  }
+  
+  .section-title {
+    font-size: 28px;
+    color: #E8E8F6;
+    margin-bottom: 32px;
+    text-align: center;
+  }
+  
+  /* 联系方式 */
+  .contact-section {
+    margin-bottom: 40px;
+  }
+  
+  .contact-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+  }
+  
+  .contact-card {
+    background-color: #141419;
+    border-radius: 8px;
+    padding: 32px;
+    text-align: center;
+    border: 1px solid rgba(78, 78, 100, 0.3);
+    transition: all 0.3s ease;
+  }
+  
+  .contact-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(99, 97, 220, 0.5);
+  }
+  
+  .contact-icon {
+    font-size: 40px;
+    margin-bottom: 16px;
+  }
+  
+  .contact-title {
+    font-size: 18px;
+    color: #E8E8F6;
+    margin-bottom: 8px;
+  }
+  
+  .contact-info {
+    color: #62616F;
+    font-size: 14px;
+  }
+  
+  .contact-link {
+    color: #6361DC;
+    font-size: 14px;
+    text-decoration: none;
+  }
+  
+  .contact-link:hover {
+    text-decoration: underline;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .about-header {
+      flex-direction: column;
+      text-align: center;
+      gap: 32px;
+    }
+    
+    .about-links {
+      justify-content: center;
+    }
+    
+    .timeline {
+      padding-left: 30px;
+    }
+    
+    .timeline::before {
+      left: 15px;
+    }
+    
+    .timeline-dot {
+      left: -23px;
+    }
+  }
+</style>

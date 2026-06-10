@@ -1,0 +1,315 @@
+---
+// 搜索栏组件
+---
+
+<div class="search-container">
+  <div class="search-input-wrapper">
+    <span class="search-icon">🔍</span>
+    <input 
+      type="text" 
+      class="search-input" 
+      placeholder="搜索文章..." 
+      id="search-input"
+      autocomplete="off"
+    />
+    <button class="search-clear" id="search-clear" style="display: none;">
+      ✕
+    </button>
+  </div>
+  
+  <div class="search-results" id="search-results" style="display: none;">
+    <div class="search-results-list" id="search-results-list">
+      <!-- 搜索结果将在这里动态生成 -->
+    </div>
+    <div class="search-no-results" id="search-no-results" style="display: none;">
+      <div class="no-results-icon">🔍</div>
+      <p class="no-results-text">未找到相关文章</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .search-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 32px;
+  }
+  
+  .search-input-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: #141419;
+    border: 1px solid rgba(78, 78, 100, 0.3);
+    border-radius: 12px;
+    padding: 12px 16px;
+    transition: all 0.3s ease;
+  }
+  
+  .search-input-wrapper:focus-within {
+    border-color: #6361DC;
+    box-shadow: 0px 0px 0px 3px rgba(99, 97, 220, 0.1);
+  }
+  
+  .search-icon {
+    font-size: 18px;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+  
+  .search-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: #E8E8F6;
+    font-size: 16px;
+    font-family: inherit;
+  }
+  
+  .search-input::placeholder {
+    color: #62616F;
+  }
+  
+  .search-clear {
+    background: none;
+    border: none;
+    color: #62616F;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 14px;
+    transition: color 0.3s ease;
+  }
+  
+  .search-clear:hover {
+    color: #E8E8F6;
+  }
+  
+  .search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 8px;
+    background-color: #141419;
+    border: 1px solid rgba(78, 78, 100, 0.3);
+    border-radius: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0px 4px 20px rgba(10, 10, 14, 0.8);
+  }
+  
+  .search-results-list {
+    padding: 8px;
+  }
+  
+  .search-result-item {
+    display: block;
+    padding: 16px;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .search-result-item:hover {
+    background-color: #1F1F26;
+  }
+  
+  .result-title {
+    font-size: 16px;
+    color: #E8E8F6;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  .result-excerpt {
+    font-size: 14px;
+    color: #62616F;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .result-meta {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #4E4E64;
+  }
+  
+  .search-no-results {
+    padding: 40px 20px;
+    text-align: center;
+  }
+  
+  .no-results-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+  
+  .no-results-text {
+    color: #62616F;
+    font-size: 16px;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .search-container {
+      max-width: 100%;
+    }
+  }
+</style>
+
+<script>
+  // 搜索功能实现
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    const searchClear = document.getElementById('search-clear');
+    const searchResults = document.getElementById('search-results');
+    const searchResultsList = document.getElementById('search-results-list');
+    const searchNoResults = document.getElementById('search-no-results');
+    
+    if (!searchInput || !searchResults || !searchResultsList || !searchNoResults) return;
+    
+    // 文章数据（从页面中获取）
+    let postsData: Array<{
+      title: string;
+      slug: string;
+      description: string;
+      categories: string[];
+      date: string;
+    }> = [];
+    
+    // 获取文章数据
+    async function loadPostsData() {
+      try {
+        const response = await fetch('/api/posts.json');
+        if (response.ok) {
+          postsData = await response.json();
+        }
+      } catch (error) {
+        console.error('Failed to load posts data:', error);
+      }
+    }
+    
+    // 初始化
+    loadPostsData();
+    
+    // 搜索函数
+    function searchPosts(query: string) {
+      if (!query.trim()) {
+        searchResults.style.display = 'none';
+        return;
+      }
+      
+      const lowerQuery = query.toLowerCase();
+      const results = postsData.filter((post) => {
+        const titleMatch = post.title.toLowerCase().includes(lowerQuery);
+        const descMatch = post.description?.toLowerCase().includes(lowerQuery);
+        const categoryMatch = post.categories.some((cat) => 
+          cat.toLowerCase().includes(lowerQuery)
+        );
+        
+        return titleMatch || descMatch || categoryMatch;
+      });
+      
+      displayResults(results, query);
+    }
+    
+    // 显示搜索结果
+    function displayResults(results: typeof postsData, query: string) {
+      searchResults.style.display = 'block';
+      
+      if (results.length === 0) {
+        searchResultsList.innerHTML = '';
+        searchNoResults.style.display = 'block';
+        return;
+      }
+      
+      searchNoResults.style.display = 'none';
+      
+      searchResultsList.innerHTML = results
+        .slice(0, 10) // 限制显示数量
+        .map((post) => {
+          // 高亮搜索词
+          const highlightedTitle = highlightText(post.title, query);
+          const highlightedDesc = post.description 
+            ? highlightText(post.description, query) 
+            : '';
+          
+          return `
+            <a href="/blog/${post.slug}" class="search-result-item">
+              <div class="result-title">${highlightedTitle}</div>
+              ${highlightedDesc ? `<div class="result-excerpt">${highlightedDesc}</div>` : ''}
+              <div class="result-meta">
+                <span>${post.categories.join(', ')}</span>
+                <span>${post.date}</span>
+              </div>
+            </a>
+          `;
+        })
+        .join('');
+    }
+    
+    // 高亮文本
+    function highlightText(text: string, query: string) {
+      if (!query) return text;
+      
+      const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+      return text.replace(regex, '<mark style="background-color: rgba(99, 97, 220, 0.3); color: #E8E8F6; padding: 2px 4px; border-radius: 4px;">$1</mark>');
+    }
+    
+    // 转义正则表达式特殊字符
+    function escapeRegex(string: string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+    
+    // 事件监听
+    let searchTimeout: ReturnType<typeof setTimeout>;
+    
+    searchInput.addEventListener('input', (e) => {
+      const target = e.target as HTMLInputElement;
+      const query = target.value;
+      
+      // 显示/隐藏清除按钮
+      if (searchClear) {
+        searchClear.style.display = query ? 'block' : 'none';
+      }
+      
+      // 防抖搜索
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        searchPosts(query);
+      }, 300);
+    });
+    
+    // 清除搜索
+    if (searchClear) {
+      searchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        searchClear.style.display = 'none';
+        searchResults.style.display = 'none';
+        searchInput.focus();
+      });
+    }
+    
+    // 点击外部关闭搜索结果
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.search-container')) {
+        searchResults.style.display = 'none';
+      }
+    });
+    
+    // 键盘导航
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        searchResults.style.display = 'none';
+        searchInput.blur();
+      }
+    });
+  });
+</script>

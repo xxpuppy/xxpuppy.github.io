@@ -1,0 +1,51 @@
+---
+// 页脚组件 - asorn 简洁风格
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <p class="copyright">
+      &copy; {currentYear} <span class="gradient-text">xxpuppy</span>. All rights reserved.
+    </p>
+    <p class="powered-by">
+      Powered by <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding: 32px 0;
+    text-align: center;
+    border-top: 1px solid rgba(78, 78, 100, 0.2);
+  }
+
+  .copyright {
+    color: #62616F;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #A29CD3, #E8BFAC);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 500;
+  }
+
+  .powered-by {
+    color: #4E4E64;
+    font-size: 0.75rem;
+  }
+
+  .powered-by a {
+    color: #6361DC;
+    text-decoration: none;
+  }
+
+  .powered-by a:hover {
+    text-decoration: underline;
+  }
+</style>
