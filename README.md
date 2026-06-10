@@ -1,43 +1,35 @@
-# Astro Starter Kit: Minimal
+# xxpuppy's Blog
 
-```sh
-npm create astro@latest -- --template minimal
+个人技术博客，专注于网络安全、渗透测试、漏洞分析等内容。
+
+## 技术栈
+
+- [Astro](https://astro.build/) - 静态站点生成器
+- SCSS - 样式预处理器
+- GitHub Pages - 托管部署
+
+## 功能特性
+
+- Asorn 风格深色主题设计
+- 点击粒子烟花动画效果
+- 文章分类与标签筛选
+- 归档时间线展示
+- 响应式布局适配
+
+## 本地运行
+
+```bash
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+访问 http://localhost:4321
 
-## 🚀 Project Structure
+## 部署
 
-Inside of your Astro project, you'll see the following folders and files:
+推送到 GitHub 后，GitHub Actions 会自动构建并部署到 GitHub Pages。
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## 联系方式
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- Email: 1703653177@qq.com
+- QQ: 1703653177
