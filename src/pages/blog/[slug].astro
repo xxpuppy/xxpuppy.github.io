@@ -1,6 +1,7 @@
 ---
 // 文章详情页面
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import NoteSidebar from '../../components/NoteSidebar.astro';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -35,6 +36,9 @@ const relatedPosts = allPosts
 ---
 
 <BaseLayout title={title} description={description}>
+  <!-- 左侧笔记目录导航 -->
+  <NoteSidebar currentPostId={post.id} />
+  
   <article class="post">
     <div class="container">
       <!-- 文章头部 -->
@@ -144,6 +148,8 @@ const relatedPosts = allPosts
 <style>
   .post {
     padding: 40px 0 80px;
+    max-width: 800px;
+    margin: 0 auto;
   }
   
   /* 文章头部 */
@@ -316,7 +322,7 @@ const relatedPosts = allPosts
   
   /* 文章内容 */
   .post-content {
-    max-width: 800px;
+    max-width: 100%;
     margin: 0 auto;
     line-height: 1.8;
   }
