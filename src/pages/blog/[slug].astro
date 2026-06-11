@@ -308,6 +308,19 @@ const relatedPosts = allPosts
     color: #E8E8F6;
   }
   
+  .toc-item a.active {
+    color: #6361DC;
+    font-weight: 500;
+    border-left: 2px solid #6361DC;
+    padding-left: 8px;
+    margin-left: -10px;
+  }
+  
+  .toc-item.active {
+    background-color: rgba(99, 97, 220, 0.05);
+    border-radius: 4px;
+  }
+  
   .toc-level-2 {
     padding-left: 16px;
   }
@@ -579,6 +592,71 @@ const relatedPosts = allPosts
       tocToggle.addEventListener('click', () => {
         tocContent.classList.toggle('collapsed');
       });
+    }
+    
+    // 目录实时跟踪 - 使用 IntersectionObserver
+    const tocLinks = document.querySelectorAll('.toc-item a');
+    const headings = document.querySelectorAll('.post-content h2, .post-content h3, .post-content h4');
+    
+    if (tocLinks.length > 0 && headings.length > 0) {
+      // 移除所有激活状态
+      function removeAllActive() {
+        tocLinks.forEach(link => {
+          link.classList.remove('active');
+          const li = link.closest('.toc-item');
+          if (li) li.classList.remove('active');
+        });
+      }
+      
+      // 激活对应的目录链接
+      function activateTocLink(id) {
+        removeAllActive();
+        const activeLink = document.querySelector(`.toc-item a[href="#${id}"]`);
+        if (activeLink) {
+          activeLink.classList.add('active');
+          const li = activeLink.closest('.toc-item');
+          if (li) li.classList.add('active');
+          
+          // 滚动目录到可见位置
+          li?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+      
+      // 使用 IntersectionObserver 监听标题
+      const observerOptions = {
+        root: null,
+        rootMargin: '-80px 0px -70% 0px',
+        threshold: 0
+      };
+      
+      let currentActiveId = '';
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            if (id && id !== currentActiveId) {
+              currentActiveId = id;
+              activateTocLink(id);
+            }
+          }
+        });
+      }, observerOptions);
+      
+      // 观察所有标题
+      headings.forEach(heading => {
+        if (heading.id) {
+          observer.observe(heading);
+        }
+      });
+      
+      // 初始激活第一个目录项
+      if (tocLinks.length > 0) {
+        const firstLink = tocLinks[0];
+        firstLink.classList.add('active');
+        const li = firstLink.closest('.toc-item');
+        if (li) li.classList.add('active');
+      }
     }
   });
 </script>
