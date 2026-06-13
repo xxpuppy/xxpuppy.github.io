@@ -3,6 +3,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogCard from '../../components/BlogCard.astro';
 import { getCollection } from 'astro:content';
+import SideRays from '../../components/react/SideRays';
 
 // 获取所有文章
 const posts = (await getCollection('blog'))
@@ -17,6 +18,21 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
 ---
 
 <BaseLayout title="博客">
+  <!-- Side Rays 背景 -->
+  <div class="side-rays-bg">
+    <SideRays
+      rayColor1="#6361DC"
+      rayColor2="#8BF0FF"
+      intensity={2}
+      spread={2}
+      origin="top-right"
+      speed={2.5}
+      opacity={0.5}
+      falloff={1.4}
+      client:visible
+    />
+  </div>
+
   <section class="blog-page">
     <div class="container">
       <div class="blog-header">

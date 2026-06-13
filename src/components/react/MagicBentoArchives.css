@@ -1,0 +1,313 @@
+/* ── Magic Bento Grid ── */
+.mb-card-grid {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  max-width: 72em;
+  margin: 0 auto;
+}
+
+/* ── Card base ── */
+.mb-bento-card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 200px;
+  width: 100%;
+  padding: 1.5em;
+  border-radius: 20px;
+  border: 1px solid #2F293A;
+  background: #120F17;
+  font-weight: 300;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow-intensity: 0;
+  --glow-radius: 200px;
+}
+
+.mb-bento-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* ── Category link (header badge + title) ── */
+.mb-card__category-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.mb-card__category-link:hover .mb-card__title {
+  color: #A29CD3;
+}
+
+/* ── Card header ── */
+.mb-card__header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: auto;
+}
+
+.mb-card__badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  letter-spacing: 0.3px;
+  transition: transform 0.2s ease;
+}
+
+.mb-card__badge:hover {
+  transform: scale(1.05);
+}
+
+/* ── Card content ── */
+.mb-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Title ── */
+.mb-card__title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #E8E8F6;
+  margin: 0;
+  line-height: 1.3;
+  transition: color 0.2s ease;
+}
+
+/* ── Article list ── */
+.mb-card__articles {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mb-card__article-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mb-card__article-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Article link ── */
+.mb-card__article-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  min-width: 0;
+  flex: 1;
+}
+
+.mb-card__article-link:hover .mb-card__article-title {
+  color: #E8E8F6;
+}
+
+.mb-card__article-title {
+  font-size: 12px;
+  color: #8888A0;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+/* ================================================================
+   Size-dependent typography: 字体根据卡片大小自适应
+   ================================================================ */
+
+/* ── 小卡片 (default/small) ── */
+.mb-card--small .mb-card__title {
+  font-size: 17px;
+}
+
+.mb-card--small .mb-card__badge {
+  font-size: 12px;
+  padding: 3px 10px;
+}
+
+.mb-card--small .mb-card__article-title {
+  font-size: 12px;
+}
+
+.mb-card--small .mb-card__article-dot {
+  width: 4px;
+  height: 4px;
+}
+
+.mb-card--small .mb-card__articles {
+  gap: 5px;
+}
+
+/* ── 中卡片 (第2-3名) ── */
+.mb-card--medium .mb-card__title {
+  font-size: 22px;
+}
+
+.mb-card--medium .mb-card__badge {
+  font-size: 14px;
+  padding: 5px 14px;
+}
+
+.mb-card--medium .mb-card__article-title {
+  font-size: 13px;
+}
+
+.mb-card--medium .mb-card__article-dot {
+  width: 6px;
+  height: 6px;
+}
+
+.mb-card--medium .mb-card__articles {
+  gap: 8px;
+}
+
+/* ── 大卡片 (第1名，文章最多) ── */
+.mb-card--large .mb-card__title {
+  font-size: 28px;
+}
+
+.mb-card--large .mb-card__badge {
+  font-size: 15px;
+  padding: 6px 16px;
+}
+
+.mb-card--large .mb-card__article-title {
+  font-size: 15px;
+}
+
+.mb-card--large .mb-card__article-dot {
+  width: 7px;
+  height: 7px;
+}
+
+.mb-card--large .mb-card__articles {
+  gap: 10px;
+}
+
+.mb-card--large .mb-card__content {
+  gap: 18px;
+}
+
+/* ── Border glow effect ── */
+.mb-card--border-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 6px;
+  background: radial-gradient(
+    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(99, 97, 220, calc(var(--glow-intensity) * 0.8)) 0%,
+    rgba(99, 97, 220, calc(var(--glow-intensity) * 0.4)) 30%,
+    transparent 60%
+  );
+  border-radius: inherit;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+/* ── Particle container ── */
+.mb-particle-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.mb-particle-container:hover {
+  box-shadow:
+    0 4px 20px rgba(46, 24, 78, 0.2),
+    0 0 30px rgba(99, 97, 220, 0.2);
+}
+
+/* ── Global spotlight ── */
+.mb-global-spotlight {
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+  z-index: 200 !important;
+  pointer-events: none;
+}
+
+.mb-bento-section {
+  position: relative;
+  user-select: none;
+}
+
+/* ── Responsive Grid ── */
+
+/* Mobile: 1 column */
+@media (max-width: 599px) {
+  .mb-card-grid {
+    grid-template-columns: 1fr;
+    padding: 8px;
+    gap: 10px;
+  }
+
+  .mb-bento-card {
+    min-height: 160px;
+    padding: 1.2em;
+  }
+
+  .mb-card--large .mb-card__title {
+    font-size: 22px;
+  }
+
+  .mb-card--large .mb-card__article-title {
+    font-size: 13px;
+  }
+}
+
+/* Tablet: 2 columns */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .mb-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .mb-card--large {
+    grid-column: span 2;
+  }
+}
+
+/* Desktop: 3 columns, 大卡片跨2列2行 */
+@media (min-width: 1024px) {
+  .mb-card-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .mb-card--large {
+    grid-column: span 2;
+    grid-row: span 2;
+    min-height: 420px;
+  }
+
+  .mb-card--medium {
+    grid-column: span 1;
+  }
+}

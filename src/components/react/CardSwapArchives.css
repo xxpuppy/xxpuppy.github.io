@@ -1,0 +1,88 @@
+.card-swap-container {
+  position: relative;
+  margin: 0 auto;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+.card-swap-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 16px;
+  background: rgba(20, 20, 25, 0.95);
+  border: 1px solid rgba(78, 78, 100, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.card-swap-card:hover {
+  border-color: rgba(99, 97, 220, 0.6);
+}
+
+.card-inner {
+  padding: 28px 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-category-name {
+  font-size: 24px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #A29CD3, #E8BFAC);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 4px;
+}
+
+.card-category-count {
+  font-size: 14px;
+  color: #6361DC;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.card-posts-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.card-post-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: rgba(31, 31, 38, 0.6);
+  border-radius: 8px;
+}
+
+.card-post-date {
+  color: #4E4E64;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.card-post-title {
+  color: #B3B3C1;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-more {
+  margin-top: 16px;
+  text-align: center;
+  color: #6361DC;
+  font-size: 14px;
+  font-weight: 500;
+}

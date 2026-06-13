@@ -1,9 +1,26 @@
 ---
 // 关于页面
 import BaseLayout from '../layouts/BaseLayout.astro';
+import GlassContact from '../components/react/GlassContact';
+import SideRays from '../components/react/SideRays';
 ---
 
 <BaseLayout title="关于我">
+  <!-- Side Rays 背景 -->
+  <div class="side-rays-bg">
+    <SideRays
+      rayColor1="#6361DC"
+      rayColor2="#8BF0FF"
+      intensity={2}
+      spread={2}
+      origin="top-right"
+      speed={2.5}
+      opacity={0.5}
+      falloff={1.4}
+      client:visible
+    />
+  </div>
+
   <section class="about-page">
     <div class="container">
       <!-- 个人介绍 -->
@@ -33,23 +50,30 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <div class="contact-section">
         <h2 class="section-title">联系方式</h2>
         <div class="contact-cards">
-          <div class="contact-card magical">
-            <div class="contact-icon">📧</div>
-            <h3 class="contact-title">邮箱</h3>
-            <p class="contact-info">1703653177@qq.com</p>
-          </div>
-          <div class="contact-card magical">
-            <div class="contact-icon">💬</div>
-            <h3 class="contact-title">QQ</h3>
-            <p class="contact-info">1703653177</p>
-          </div>
-          <div class="contact-card magical">
-            <div class="contact-icon">🐙</div>
-            <h3 class="contact-title">GitHub</h3>
-            <a href="https://github.com/xxpuppy" target="_blank" rel="noopener noreferrer" class="contact-link">
-              github.com/xxpuppy
-            </a>
-          </div>
+          <GlassContact
+            client:visible
+            items={[
+              {
+                iconType: 'mail',
+                label: '邮箱',
+                value: '1703653177@qq.com',
+                color: 'blue'
+              },
+              {
+                iconType: 'message',
+                label: 'QQ',
+                value: '1703653177',
+                color: 'purple'
+              },
+              {
+                iconType: 'github',
+                label: 'GitHub',
+                value: 'xxpuppy',
+                color: 'indigo',
+                onClick: () => window.open('https://github.com/xxpuppy', '_blank')
+              }
+            ]}
+          />
         </div>
       </div>
     </div>
@@ -132,49 +156,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
   
   .contact-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 24px;
-  }
-  
-  .contact-card {
-    background-color: #141419;
-    border-radius: 8px;
-    padding: 32px;
-    text-align: center;
-    border: 1px solid rgba(78, 78, 100, 0.3);
-    transition: all 0.3s ease;
-  }
-  
-  .contact-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(99, 97, 220, 0.5);
-  }
-  
-  .contact-icon {
-    font-size: 40px;
-    margin-bottom: 16px;
-  }
-  
-  .contact-title {
-    font-size: 18px;
-    color: #E8E8F6;
-    margin-bottom: 8px;
-  }
-  
-  .contact-info {
-    color: #62616F;
-    font-size: 14px;
-  }
-  
-  .contact-link {
-    color: #6361DC;
-    font-size: 14px;
-    text-decoration: none;
-  }
-  
-  .contact-link:hover {
-    text-decoration: underline;
+    display: flex;
+    justify-content: center;
   }
   
   @media screen and (max-width: 768px) {
