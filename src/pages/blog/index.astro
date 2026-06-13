@@ -3,7 +3,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogCard from '../../components/BlogCard.astro';
 import { getCollection } from 'astro:content';
-import SideRays from '../../components/react/SideRays';
+import AuroraBg from '../../components/react/AuroraBg';
 
 // 获取所有文章
 const posts = (await getCollection('blog'))
@@ -18,20 +18,8 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
 ---
 
 <BaseLayout title="博客">
-  <!-- Side Rays 背景 -->
-  <div class="side-rays-bg">
-    <SideRays
-      rayColor1="#6361DC"
-      rayColor2="#8BF0FF"
-      intensity={2}
-      spread={2}
-      origin="top-right"
-      speed={2.5}
-      opacity={0.5}
-      falloff={1.4}
-      client:visible
-    />
-  </div>
+  <!-- Aurora 极光背景 -->
+  <AuroraBg client:load />
 
   <section class="blog-page">
     <div class="container">
@@ -108,7 +96,7 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
   .blog-title {
     font-size: 36px;
     font-weight: 700;
-    background: linear-gradient(135deg, #A29CD3, #E8BFAC);
+    background: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -116,7 +104,7 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
   }
   
   .blog-desc {
-    color: #B3B3C1;
+    color: var(--text-secondary);
     font-size: 16px;
     max-width: 600px;
     margin: 0 auto;
@@ -124,11 +112,11 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
   
   /* 筛选器 */
   .filters {
-    background-color: #141419;
+    background-color: var(--bg-card);
     border-radius: 12px;
     padding: 24px;
     margin-bottom: 40px;
-    border: 1px solid rgba(78, 78, 100, 0.3);
+    border: 1px solid var(--border-light);
   }
   
   .filter-group {
@@ -141,7 +129,7 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
   
   .filter-title {
     font-size: 14px;
-    color: #62616F;
+    color: var(--text-tertiary);
     margin-bottom: 12px;
     font-weight: 500;
   }
@@ -155,8 +143,8 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
   .filter-tag {
     padding: 8px 16px;
     border-radius: 20px;
-    background-color: #1F1F26;
-    color: #B3B3C1;
+    background-color: var(--bg-button);
+    color: var(--text-secondary);
     border: none;
     cursor: pointer;
     font-size: 13px;
@@ -164,13 +152,13 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
   }
   
   .filter-tag:hover {
-    background-color: #2A2A35;
-    color: #E8E8F6;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
   }
   
   .filter-tag.active {
-    background-color: #6361DC;
-    color: #ffffff;
+    background-color: var(--accent);
+    color: var(--white);
   }
   
   /* 文章网格 */
@@ -201,12 +189,12 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
   
   .empty-title {
     font-size: 24px;
-    color: #E8E8F6;
+    color: var(--text-primary);
     margin-bottom: 12px;
   }
   
   .empty-desc {
-    color: #62616F;
+    color: var(--text-tertiary);
     font-size: 16px;
   }
   

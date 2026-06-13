@@ -3,7 +3,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import MagicBentoArchives from '../components/react/MagicBentoArchives';
-import SideRays from '../components/react/SideRays';
+import AuroraBg from '../components/react/AuroraBg';
 
 // 获取所有文章
 const posts = (await getCollection('blog'))
@@ -37,20 +37,8 @@ const totalCategories = Object.keys(postsByCategory).length;
 ---
 
 <BaseLayout title="归档">
-  <!-- Side Rays 背景 -->
-  <div class="side-rays-bg">
-    <SideRays
-      rayColor1="#6361DC"
-      rayColor2="#8BF0FF"
-      intensity={2}
-      spread={2}
-      origin="top-right"
-      speed={2.5}
-      opacity={0.5}
-      falloff={1.4}
-      client:visible
-    />
-  </div>
+  <!-- Aurora 极光背景 -->
+  <AuroraBg client:load />
 
   <section class="archives-page">
     <div class="container">
@@ -81,14 +69,14 @@ const totalCategories = Object.keys(postsByCategory).length;
   .archives-title {
     font-size: 36px;
     font-weight: 700;
-    background: linear-gradient(135deg, #A29CD3, #E8BFAC);
+    background: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .archives-desc {
-    color: #B3B3C1;
+    color: var(--text-secondary);
     font-size: 16px;
     margin-top: 12px;
   }

@@ -1,0 +1,20 @@
+.aurora-bg-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* 深色模式下保持暗色背景 */
+[data-theme="dark"] .aurora-bg-container {
+  background-color: #0E0E13;
+}
+
+/* 亮色模式下使用白色背景 */
+[data-theme="light"] .aurora-bg-container {
+  background-color: #ffffff;
+}

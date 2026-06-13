@@ -2,24 +2,12 @@
 // 关于页面
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GlassContact from '../components/react/GlassContact';
-import SideRays from '../components/react/SideRays';
+import AuroraBg from '../components/react/AuroraBg';
 ---
 
 <BaseLayout title="关于我">
-  <!-- Side Rays 背景 -->
-  <div class="side-rays-bg">
-    <SideRays
-      rayColor1="#6361DC"
-      rayColor2="#8BF0FF"
-      intensity={2}
-      spread={2}
-      origin="top-right"
-      speed={2.5}
-      opacity={0.5}
-      falloff={1.4}
-      client:visible
-    />
-  </div>
+  <!-- Aurora 极光背景 -->
+  <AuroraBg client:load />
 
   <section class="about-page">
     <div class="container">
@@ -118,7 +106,7 @@ import SideRays from '../components/react/SideRays';
   .about-name {
     font-size: 36px;
     font-weight: 700;
-    background: linear-gradient(135deg, #A29CD3, #E8BFAC);
+    background: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -127,12 +115,12 @@ import SideRays from '../components/react/SideRays';
   
   .about-title {
     font-size: 18px;
-    color: #6361DC;
+    color: var(--accent);
     margin-bottom: 16px;
   }
   
   .about-desc {
-    color: #B3B3C1;
+    color: var(--text-secondary);
     font-size: 16px;
     line-height: 1.8;
     margin-bottom: 24px;
@@ -145,7 +133,7 @@ import SideRays from '../components/react/SideRays';
   
   .section-title {
     font-size: 28px;
-    color: #E8E8F6;
+    color: var(--text-primary);
     margin-bottom: 32px;
     text-align: center;
   }

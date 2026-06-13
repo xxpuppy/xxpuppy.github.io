@@ -1,6 +1,7 @@
 ---
 // 导航栏组件 - Pill Nav 风格
 import PillNavBar from './react/PillNavBar';
+import ThemeToggle from './react/ThemeToggle';
 
 const currentPath = Astro.url.pathname;
 
@@ -24,13 +25,16 @@ const activeHref = navItems.find(
       logoAlt="xxpuppy"
       items={navItems}
       activeHref={activeHref}
-      baseColor="rgba(25,25,32,0.3)"
-      pillColor="#6361DC"
-      hoveredPillTextColor="#E8E8F6"
-      pillTextColor="#E8E8F6"
+      baseColor="var(--bg-header)"
+      pillColor="var(--accent)"
+      hoveredPillTextColor="var(--text-primary)"
+      pillTextColor="var(--text-primary)"
       initialLoadAnimation={false}
       client:load
     />
+    <div class="header-actions">
+      <ThemeToggle client:load />
+    </div>
   </div>
 </header>
 
@@ -96,5 +100,15 @@ const activeHref = navItems.find(
     padding: 0 24px;
     max-width: 968px;
     margin: 0 auto;
+  }
+
+  .header-actions {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 </style>

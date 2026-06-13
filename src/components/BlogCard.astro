@@ -63,17 +63,17 @@ function getCategoryColor(category: string): string {
 
 <style>
   .blog-card {
-    background-color: #141419;
+    background-color: var(--bg-card);
     border-radius: 8px;
     overflow: hidden;
     transition: all 0.3s ease;
-    border: 1px solid rgba(78, 78, 100, 0.3);
+    border: 1px solid var(--border-light);
   }
   
   .blog-card:hover {
     transform: translateY(-4px);
-    border-color: rgba(99, 97, 220, 0.5);
-    box-shadow: 0px 4px 12px 0px rgba(10, 10, 14, 0.6);
+    border-color: var(--accent);
+    box-shadow: 0px 4px 12px 0px rgba(10, 10, 14, 0.3);
   }
   
   .card-link {
@@ -108,7 +108,7 @@ function getCategoryColor(category: string): string {
   }
   
   .card-date {
-    color: #62616F;
+    color: var(--text-tertiary);
     font-size: 12px;
     flex-shrink: 0;
   }
@@ -116,7 +116,7 @@ function getCategoryColor(category: string): string {
   .card-title {
     font-size: 18px;
     font-weight: 600;
-    color: #E8E8F6;
+    color: var(--text-primary);
     margin-bottom: 12px;
     line-height: 1.4;
     display: -webkit-box;
@@ -126,7 +126,7 @@ function getCategoryColor(category: string): string {
   }
   
   .card-description {
-    color: #B3B3C1;
+    color: var(--text-secondary);
     font-size: 14px;
     line-height: 1.6;
     margin-bottom: 20px;
@@ -145,7 +145,7 @@ function getCategoryColor(category: string): string {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: #6361DC;
+    color: var(--accent);
     font-size: 14px;
     font-weight: 500;
     transition: gap 0.3s ease;

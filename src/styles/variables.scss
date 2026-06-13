@@ -1,7 +1,86 @@
 // Asorn 设计系统变量
 // 基于 asorn-open-main 模板的设计规范
 
-// 颜色系统
+// ============================================
+// CSS 变量系统（深浅色主题）
+// ============================================
+:root {
+  // 默认暗色模式
+  --bg-primary: #0E0E13;
+  --bg-secondary: #191920;
+  --bg-card: #141419;
+  --bg-button: #1F1F26;
+  --bg-header: rgba(25, 25, 32, 0.3);
+  
+  --text-primary: #E8E8F6;
+  --text-secondary: #B3B3C1;
+  --text-tertiary: #62616F;
+  
+  --accent: #6361DC;
+  --accent-light: #8B89E8;
+  --accent-gradient-start: #A29CD3;
+  --accent-gradient-end: #E8BFAC;
+  
+  --border-color: #4E4E64;
+  --border-light: rgba(255, 255, 255, 0.08);
+  
+  --shadow-color: #0a0a0e;
+  --card-shadow: 0px 0px 8px 0px rgba(10, 10, 14, 0.4);
+  
+  --white: #ffffff;
+  --code-bg: #141419;
+  
+  // SideRays 配置
+  --rays-color1: #6361DC;
+  --rays-color2: #8BF0FF;
+  --rays-opacity: 0.5;
+  
+  // 过渡时间
+  --transition-theme: 0.3s ease-in-out;
+}
+
+[data-theme="light"] {
+  // 亮色模式
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f7;
+  --bg-card: #ffffff;
+  --bg-button: #e8e8ed;
+  --bg-header: rgba(255, 255, 255, 0.8);
+  
+  --text-primary: #1a1a2e;
+  --text-secondary: #6b6b7b;
+  --text-tertiary: #9b9bab;
+  
+  --accent: #6361DC;
+  --accent-light: #4f4dd4;
+  --accent-gradient-start: #7B78E0;
+  --accent-gradient-end: #D4A893;
+  
+  --border-color: #d1d1d9;
+  --border-light: rgba(0, 0, 0, 0.08);
+  
+  --shadow-color: #e0e0e6;
+  --card-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.08);
+  
+  --white: #ffffff;
+  --code-bg: #f0f0f5;
+  
+  // SideRays 配置（亮色时变浅）
+  --rays-color1: #8B89E8;
+  --rays-color2: #B3E8FF;
+  --rays-opacity: 0.3;
+}
+
+// 全局过渡动画（排除主题切换的圆形扩散）
+body:not(.theme-transitioning) * {
+  transition-property: background-color, color, border-color, box-shadow;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in-out;
+}
+
+// ============================================
+// SCSS 变量（用于 calc 等场景）
+// ============================================
 $color-brand-default: #6361DC;
 $color-text-body-primary: #E8E8F6;
 $color-text-body-secondary: #B3B3C1;

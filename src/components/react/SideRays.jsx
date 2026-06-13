@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import { Renderer, Program, Triangle, Mesh } from 'ogl';
+import { getCurrentTheme, onThemeChange } from '../../scripts/theme-toggle';
 import './SideRays.css';
 
 const hexToRgb = hex => {
@@ -16,20 +17,43 @@ const originToFlip = origin => {
   }
 };
 
+// 主题对应的默认颜色
+const THEME_COLORS = {
+  dark: {
+    rayColor1: '#6361DC',
+    rayColor2: '#8BF0FF',
+    opacity: 0.5,
+    intensity: 2
+  },
+  light: {
+    rayColor1: '#8B89E8',
+    rayColor2: '#B3E8FF',
+    opacity: 0.3,
+    intensity: 1.5
+  }
+};
+
 const SideRays = ({
   speed = 2.5,
-  rayColor1 = '#6361DC',
-  rayColor2 = '#8BF0FF',
-  intensity = 1.2,
+  rayColor1 = null,
+  rayColor2 = null,
+  intensity = null,
   spread = 2,
   origin = 'top-right',
   tilt = 0,
   saturation = 1.5,
   blend = 0.75,
   falloff = 1.6,
-  opacity = 0.25,
+  opacity = null,
   className = ''
 }) => {
+  const [theme, setTheme] = useState(getCurrentTheme());
+  
+  // 根据主题计算实际值
+  const actualRayColor1 = rayColor1 || THEME_COLORS[theme].rayColor1;
+  const actualRayColor2 = rayColor2 || THEME_COLORS[theme].rayColor2;
+  const actualOpacity = opacity !== null ? opacity : THEME_COLORS[theme].opacity;
+  const actualIntensity = intensity !== null ? intensity : THEME_COLORS[theme].intensity;
   const containerRef = useRef(null);
   const uniformsRef = useRef(null);
   const rendererRef = useRef(null);
@@ -38,6 +62,14 @@ const SideRays = ({
   const cleanupFunctionRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
   const observerRef = useRef(null);
+
+  // 监听主题变化
+  useEffect(() => {
+    const unsubscribe = onThemeChange((newTheme) => {
+      setTheme(newTheme);
+    });
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -162,9 +194,9 @@ void main() {
         iTime: { value: 0 },
         iResolution: { value: [1, 1] },
         iSpeed: { value: speed },
-        iRayColor1: { value: hexToRgb(rayColor1) },
-        iRayColor2: { value: hexToRgb(rayColor2) },
-        iIntensity: { value: intensity },
+        iRayColor1: { value: hexToRgb(actualRayColor1) },
+        iRayColor2: { value: hexToRgb(actualRayColor2) },
+        iIntensity: { value: actualIntensity },
         iSpread: { value: spread },
         iFlipX: { value: flipX },
         iFlipY: { value: flipY },
@@ -172,7 +204,7 @@ void main() {
         iSaturation: { value: saturation },
         iBlend: { value: blend },
         iFalloff: { value: falloff },
-        iOpacity: { value: opacity }
+        iOpacity: { value: actualOpacity }
       };
       uniformsRef.current = uniforms;
 
@@ -232,15 +264,15 @@ void main() {
         cleanupFunctionRef.current = null;
       }
     };
-  }, [isVisible, speed, rayColor1, rayColor2, intensity, spread, origin, tilt, saturation, blend, falloff, opacity]);
+  }, [isVisible, speed, actualRayColor1, actualRayColor2, actualIntensity, spread, origin, tilt, saturation, blend, falloff, actualOpacity]);
 
   useEffect(() => {
     if (!uniformsRef.current) return;
     const u = uniformsRef.current;
     u.iSpeed.value = speed;
-    u.iRayColor1.value = hexToRgb(rayColor1);
-    u.iRayColor2.value = hexToRgb(rayColor2);
-    u.iIntensity.value = intensity;
+    u.iRayColor1.value = hexToRgb(actualRayColor1);
+    u.iRayColor2.value = hexToRgb(actualRayColor2);
+    u.iIntensity.value = actualIntensity;
     u.iSpread.value = spread;
     const [flipX, flipY] = originToFlip(origin);
     u.iFlipX.value = flipX;
@@ -249,8 +281,8 @@ void main() {
     u.iSaturation.value = saturation;
     u.iBlend.value = blend;
     u.iFalloff.value = falloff;
-    u.iOpacity.value = opacity;
-  }, [speed, rayColor1, rayColor2, intensity, spread, origin, tilt, saturation, blend, falloff, opacity]);
+    u.iOpacity.value = actualOpacity;
+  }, [theme, speed, actualRayColor1, actualRayColor2, actualIntensity, spread, origin, tilt, saturation, blend, falloff, actualOpacity]);
 
   return <div ref={containerRef} className={`side-rays-container ${className}`.trim()} />;
 };

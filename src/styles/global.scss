@@ -20,8 +20,8 @@ html {
 }
 
 body {
-  background-color: $color-fill-bg;
-  color: $color-text-body-primary;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   font-family: $font-family-primary;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -31,18 +31,18 @@ body {
 
 // 链接样式
 a {
-  color: $color-brand-default;
+  color: var(--accent);
   text-decoration: none;
   transition: color $transition-default;
 
   &:hover {
-    color: color.adjust($color-brand-default, $lightness: 10%);
+    color: var(--accent-light);
   }
 }
 
 // 标题样式
 h1, h2, h3, h4, h5, h6 {
-  color: $color-text-body-primary;
+  color: var(--text-primary);
   font-weight: 600;
   line-height: 1.3;
   margin-bottom: $spacing-md;
@@ -57,15 +57,15 @@ h6 { font-size: 1rem; }
 
 // 段落样式
 p {
-  color: $color-text-body-secondary;
+  color: var(--text-secondary);
   margin-bottom: $spacing-md;
   line-height: 1.8;
 }
 
 // 代码样式
 code {
-  background-color: $color-fill-card;
-  color: $color-brand-default;
+  background-color: var(--code-bg);
+  color: var(--accent);
   padding: 2px 6px;
   border-radius: 4px;
   font-family: 'Fira Code', 'Consolas', monospace;
@@ -73,7 +73,7 @@ code {
 }
 
 pre {
-  background-color: $color-fill-card;
+  background-color: var(--code-bg);
   border-radius: $border-radius-default;
   padding: $spacing-md;
   overflow-x: auto;
@@ -82,7 +82,7 @@ pre {
   code {
     background: none;
     padding: 0;
-    color: $color-text-body-primary;
+    color: var(--text-primary);
   }
 }
 
@@ -93,39 +93,39 @@ pre {
   justify-content: center;
   padding: 8px 20px;
   border-radius: $border-radius-full;
-  background-color: $color-fill-button;
-  color: $color-text-body-primary;
+  background-color: var(--bg-button);
+  color: var(--text-primary);
   cursor: pointer;
   transition: all $transition-default;
   border: none;
   font-size: 14px;
 
   &:hover {
-    background-color: color.adjust($color-fill-button, $lightness: 5%);
+    background-color: var(--bg-secondary);
     transform: translateY(-1px);
   }
 
   &.primary {
-    background-color: $color-brand-default;
-    color: $color-white;
+    background-color: var(--accent);
+    color: var(--white);
 
     &:hover {
-      background-color: color.adjust($color-brand-default, $lightness: 5%);
+      background-color: var(--accent-light);
     }
   }
 }
 
 // 卡片样式
 .card {
-  background-color: $color-fill-card;
+  background-color: var(--bg-card);
   border-radius: $border-radius-default;
   padding: $spacing-lg;
-  box-shadow: $card-shadow;
+  box-shadow: var(--card-shadow);
   transition: all $transition-default;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0px 4px 12px 0px rgba($shadow, 0.6);
+    box-shadow: 0px 4px 12px 0px rgba(var(--shadow-color), 0.6);
   }
 }
 
@@ -133,7 +133,7 @@ pre {
 .divider {
   width: 100%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, $line-color, transparent);
+  background: linear-gradient(90deg, transparent, var(--border-color), transparent);
   margin: $spacing-xl 0;
 }
 
@@ -146,13 +146,13 @@ pre {
 }
 
 // 工具类
-.text-primary { color: $color-text-body-primary; }
-.text-secondary { color: $color-text-body-secondary; }
-.text-tertiary { color: $color-text-body-tertiary; }
-.text-brand { color: $color-brand-default; }
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+.text-brand { color: var(--accent); }
 
-.bg-fill { background-color: $color-fill-bg; }
-.bg-card { background-color: $color-fill-card; }
+.bg-fill { background-color: var(--bg-primary); }
+.bg-card { background-color: var(--bg-card); }
 
 .mt-sm { margin-top: $spacing-sm; }
 .mt-md { margin-top: $spacing-md; }
@@ -195,8 +195,8 @@ pre {
 
 // 选择文本颜色
 ::selection {
-  background-color: rgba($color-brand-default, 0.3);
-  color: $color-white;
+  background-color: rgba(99, 97, 220, 0.3);
+  color: var(--white);
 }
 
 // 滚动条样式
@@ -206,14 +206,14 @@ pre {
 }
 
 ::-webkit-scrollbar-track {
-  background: $color-fill-bg;
+  background: var(--bg-primary);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: $line-color;
+  background: var(--border-color);
   border-radius: 4px;
 
   &:hover {
-    background: color.adjust($line-color, $lightness: 10%);
+    background: var(--text-tertiary);
   }
 }
